@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import uce.edu.web.api.academia.application.representation.CursoRepresentation;
 import uce.edu.web.api.academia.domain.Curso;
+import uce.edu.web.api.academia.domain.Estudiante;
 import uce.edu.web.api.academia.infraestructure.CursoRepository;
 
 @ApplicationScoped
@@ -24,6 +25,18 @@ public class CursoService {
         cr.nombre = curso.nombre;
         cr.descripcion = curso.descripcion;
         cr.profesor = curso.profesor;
+        cr.estudiantes = new ArrayList<>();
+        if(curso.estudiantes!= null){
+            for( Estudiante estudiante : curso.estudiantes){
+                Estudiante estu = new Estudiante();
+                estu.id = estudiante.id;
+                estu.nombre= estudiante.nombre;
+                estu.apellido=estudiante.apellido;
+                estu.email=estudiante.email;
+                estu.celular= estudiante.celular;
+                cr.estudiantes.add(estu);
+            }
+        }
         return cr;
     }
 
@@ -89,6 +102,13 @@ public class CursoService {
     }
     // Eliminar
     public void eliminar (Integer id){
-        this.cursoRepository.deleteById(id.longValue());
+        Curso curso = cursoRepository.findById(id.longValue());
+        if (curso == null) {
+            throw new RuntimeException("Curso no encontrado");
+        }
+        //quitar las relaciones antes de que se elimine
+        curso.estudiantes.clear();
+        //luego elimina el curso
+        this.cursoRepository.delete(curso);
     }
 }

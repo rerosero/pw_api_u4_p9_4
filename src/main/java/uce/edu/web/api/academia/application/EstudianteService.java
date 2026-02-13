@@ -130,6 +130,11 @@ public class EstudianteService {
     }
     //eliminar
     public void eliminar (Integer id ){
-        this.estudianteRepository.deleteById(id.longValue());
+       Estudiante estudiante= this.estudianteRepository.findById(id.longValue());
+       if (estudiante== null) {
+            throw new RuntimeException("Estudiante no encontrado");
+       }
+       estudiante.cursos.clear();
+       this.estudianteRepository.delete(estudiante);
     }
 }
