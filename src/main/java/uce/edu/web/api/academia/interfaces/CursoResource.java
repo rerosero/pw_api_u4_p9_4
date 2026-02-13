@@ -3,6 +3,8 @@ package uce.edu.web.api.academia.interfaces;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -31,6 +33,7 @@ public class CursoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("")
+    @PermitAll
     public List<CursoRepresentation> listatodos() {
         List<CursoRepresentation> cr = new ArrayList<>();
         for (CursoRepresentation curs : this.service.listartodos()) {
@@ -42,6 +45,7 @@ public class CursoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
+    @RolesAllowed("admin")
     public CursoRepresentation buscarId(@PathParam("id") Integer id) {
         return construirLinks(this.service.buscarID(id));
 
@@ -61,6 +65,7 @@ public class CursoResource {
     @Path("")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
     public Response crearCurso(CursoRepresentation cr) {
         this.service.crearCurso(cr);
         return Response.status(Response.Status.CREATED).entity(cr).build();
@@ -69,6 +74,7 @@ public class CursoResource {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
     public void actualizar(@PathParam("id") Integer id, CursoRepresentation cr) {
         this.service.actualizar(id, cr);
     }
@@ -76,6 +82,7 @@ public class CursoResource {
     @PATCH
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
     public Response actualizarParcial(@PathParam("id") Integer id, CursoRepresentation cr) {
         this.service.actualizarParcial(id, cr);
         return Response.ok(cr).build();
@@ -83,6 +90,7 @@ public class CursoResource {
 
     @DELETE
     @Path("/{id}")
+    @RolesAllowed("admin")
     public Response Eliminar(@PathParam("id") Integer id) {
         this.service.eliminar(id);
         return Response.ok("Curso eliminado con exito"+ id).build();
